@@ -1,0 +1,13 @@
+P i:
+
+N x;
+x = -8;
+I x < 0 {
+	x = 0;
+	R 'Negative changed to zero';
+}
+L {
+	R 'More';
+}
+
+E

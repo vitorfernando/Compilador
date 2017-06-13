@@ -1,0 +1,14 @@
+P z:
+
+N a;
+F x;
+S c, d;
+
+a = 2;
+x = 1.2;
+c = '!';
+d = 'Ola Mundo';
+
+R 'Hello, world' , c;
+
+E
