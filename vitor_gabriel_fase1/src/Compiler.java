@@ -335,14 +335,10 @@ public class Compiler{
                 if (lexer.token == Symbol.LEFTPAR) {
                     lexer.nextToken();
                     e1 = number();
-                    
-        System.out.println("aqqqqqq"+e1.getValue());
-                    if (e1.isInt()) {
+                   if (e1.isInt()) {
                         if (lexer.token == Symbol.COMMA) {
                             lexer.nextToken();
                             e2 = number();
-                            
-        System.out.println("aqqqq"+e2.getValue());
                             if (e2.isInt()) {
                                 if (lexer.token == Symbol.RIGHTPAR) {
                                     lexer.nextToken();
@@ -627,7 +623,9 @@ public class Compiler{
         } else if (lexer.token == Symbol.STRING) {
             return string();
         } else if (lexer.token == Symbol.TRUE || lexer.token == Symbol.FALSE) {
-            return new BooleanExpr(lexer.getStringValue());
+            BooleanExpr bexp = new BooleanExpr(lexer.getStringValue());
+            lexer.nextToken();
+            return bexp;
         }
 
         return null;

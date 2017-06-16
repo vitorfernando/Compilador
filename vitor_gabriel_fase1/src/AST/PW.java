@@ -30,7 +30,6 @@ public class PW {
     public void print(String s) {
         out.print(space.substring(0, currentIndent));
         int i = 0;
-        System.out.println("aquiiii:" + countTableSpaces);
         while (i < countTableSpaces) {
             out.print("\t");
             i++;
