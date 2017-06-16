@@ -38,7 +38,7 @@ public class WhileStmt extends Stmt {
             }
         }
         pw.decrementTS();
-        pw.print("}\n");
+        pw.println("}");
         
     }
 }

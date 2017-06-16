@@ -32,7 +32,6 @@ public class PW {
         int i = 0;
         System.out.println("aquiiii:" + countTableSpaces);
         while (i < countTableSpaces) {
-
             out.print("\t");
             i++;
         }
@@ -41,15 +40,20 @@ public class PW {
 
     public void println(String s) {
         out.print(space.substring(0, currentIndent));
+        int i = 0;
+        while (i < countTableSpaces) {
+            out.print("\t");
+            i++;
+        }
         out.println(s);
     }
 
     public void incrementTS() {
-        countTableSpaces = +1;
+        countTableSpaces = countTableSpaces + 1;
     }
 
     public void decrementTS() {
-        countTableSpaces = - 1;
+        countTableSpaces = countTableSpaces - 1;
     }
 
     int currentIndent = 0;

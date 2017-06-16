@@ -35,5 +35,6 @@ public class Body {
         for (Stmt st : stmtList) {
             st.genC(pw);
         }
+        pw.decrementTS();
     }
 }

@@ -42,10 +42,11 @@ public class ForStmt extends Stmt {
             e2.genC(pw);
             pw.out.println("; "+ name + "--){");
         }
-        
+        pw.incrementTS();
         for(int i=0 ; i < stmtList.size(); i++){
             stmtList.get(i).genC(pw);
         }
-        pw.out.println("}");
+        pw.decrementTS();
+        pw.println("}");
     }
 }

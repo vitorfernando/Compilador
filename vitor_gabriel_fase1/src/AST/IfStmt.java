@@ -36,7 +36,7 @@ public class IfStmt extends Stmt {
                 ifStmtList1.genC(pw);
             }
             pw.decrementTS();
-            pw.print("}");
+            pw.println("}");
         }
         if (!this.elseStmtList.isEmpty()) {
             pw.print("else{\n");
@@ -45,7 +45,7 @@ public class IfStmt extends Stmt {
                 elseStmtList1.genC(pw);
             }
             pw.decrementTS();
-            pw.print("}");
+            pw.println("}");
         }
 
     }
