@@ -32,7 +32,7 @@ public enum Symbol {
     INRANGE("inrange"),
     OR("or"),
     TRUE("true"),
-    NUMBER("Number"),
+    NUMBER("number"),
     PLUS("+"),
     MINUS("-"),
     MULT("*"),

@@ -31,9 +31,8 @@ public class Body {
         if (!declaration.isEmpty()) {
             declaration.genC(pw);
         }
-
+        pw.incrementTS();
         for (Stmt st : stmtList) {
-            pw.out.print("\t");
             st.genC(pw);
         }
     }

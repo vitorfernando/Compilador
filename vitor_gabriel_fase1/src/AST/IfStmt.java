@@ -24,7 +24,7 @@ public class IfStmt extends Stmt {
 
     public void genC(PW pw) {
         if (!this.ifStmtList.isEmpty()) {
-            pw.out.print("\tif(");
+            pw.print("if(");
 
             for (Expr orTestList1 : this.orTestList) {
                 orTestList1.genC(pw);
@@ -32,18 +32,20 @@ public class IfStmt extends Stmt {
 
             pw.out.println("){");
             for (Stmt ifStmtList1 : this.ifStmtList) {
-                pw.out.print("\t");
+                pw.incrementTS();
                 ifStmtList1.genC(pw);
             }
-            pw.out.print("\t}");
+            pw.decrementTS();
+            pw.print("}");
         }
         if (!this.elseStmtList.isEmpty()) {
-            pw.out.println("\telse{");
+            pw.print("else{\n");
             for (Stmt elseStmtList1 : this.elseStmtList) {
-                pw.out.print("\t");
+                pw.incrementTS();
                 elseStmtList1.genC(pw);
             }
-            pw.out.print("\t}");
+            pw.decrementTS();
+            pw.print("}");
         }
 
     }

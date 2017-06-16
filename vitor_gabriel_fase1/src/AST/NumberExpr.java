@@ -37,16 +37,23 @@ public class NumberExpr extends Expr {
         }
         return false;
     }
-    
-    public boolean isInt(){
-        if(type == Symbol.INT)
+
+    public boolean isInt() {
+        if (type == Symbol.INT) {
             return true;
+        }
         return false;
     }
 
     public String getValue() {
         if (type == Symbol.INT) {
+            if (signal == Symbol.PLUS) {
+                return "" + dig1;
+            }
             return signal.toString() + dig1;
+        }
+        if (signal == Symbol.PLUS) {
+            return "" + dig1 + "." + dig2;
         }
         return signal.toString() + dig1 + "." + dig2;
     }

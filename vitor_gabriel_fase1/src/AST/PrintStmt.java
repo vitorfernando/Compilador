@@ -20,7 +20,7 @@ public class PrintStmt extends Stmt {
     }
 
     public void genC(PW pw) {
-        pw.out.print("\tprintf(\"");
+        pw.print("printf(\"");
         for (int i = 0; i < arrayExpr.size(); i++) {
             if (arrayExpr.get(i) instanceof StringExpr) {
                 arrayExpr.get(i).genC(pw);

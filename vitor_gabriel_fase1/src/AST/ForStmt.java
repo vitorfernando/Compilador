@@ -24,12 +24,13 @@ public class ForStmt extends Stmt {
     }
 
     public void genC(PW pw){
-        pw.out.print("\tfor("+name+" = ");
+        pw.print("for("+name+" = ");
         e1.genC(pw);
         pw.out.print(";");
         NumberExpr n1 = (NumberExpr) e1;
         NumberExpr n2 = (NumberExpr) e2;
-        if(Integer.getInteger(n1.getValue()) < Integer.getInteger(n2.getValue()) ){
+        
+        if(Integer.valueOf(n1.getValue()) < Integer.valueOf(n2.getValue()) ){
             e1.genC(pw);
             pw.out.print(" < ");
             e2.genC(pw);

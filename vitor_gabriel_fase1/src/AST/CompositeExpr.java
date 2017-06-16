@@ -22,7 +22,6 @@ public class CompositeExpr extends Expr {
     }
 
     public void genC(PW pw) {
-        pw.out.print("\t");
         if(left == null){
             pw.out.print(oper.toString() + " ");
         }else{

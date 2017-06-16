@@ -4,12 +4,8 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/Compiler.java</file>
-            <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/Declaration.java</file>
             <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/ForStmt.java</file>
-            <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/BreakStmt.java</file>
-            <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/IfStmt.java</file>
-            <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/Program.java</file>
-            <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/Body.java</file>
+            <file>file:/C:/Users/vitor/Documents/NetBeansProjects/vitor_gabriel_Fase1/vitor_gabriel_fase1/src/AST/NumberExpr.java</file>
         </group>
     </open-files>
 </project-private>

@@ -25,11 +25,11 @@ public class FactorExpr extends Expr {
 
     public void genC(PW pw) {
         if (op != null) {
-            pw.out.print(" " + op.toString() + " ");
+            pw.print(" " + op.toString() + " ");
         }
         left.genC(pw);
         if (right != null) {
-            pw.out.print(" ^ ");
+            pw.print(" ^ ");
             right.genC(pw);
         }
     }

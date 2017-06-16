@@ -23,7 +23,7 @@ public class ExprStmt extends Stmt {
     }
 
     public void genC(PW pw) {
-        pw.out.print("\t" + name);
+        pw.print(name);
         if (index != -1) {
             pw.out.print("[" + index + "]");
         }

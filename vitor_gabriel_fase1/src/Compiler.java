@@ -9,7 +9,11 @@ import Lexer.Lexer;
 import Lexer.Symbol;
 import java.util.*;
 
-public class Compiler {
+/**
+ *
+ * @author vitor
+ */
+public class Compiler{
 
     private Lexer lexer;
     private CompilerError error;
@@ -331,10 +335,14 @@ public class Compiler {
                 if (lexer.token == Symbol.LEFTPAR) {
                     lexer.nextToken();
                     e1 = number();
+                    
+        System.out.println("aqqqqqq"+e1.getValue());
                     if (e1.isInt()) {
                         if (lexer.token == Symbol.COMMA) {
                             lexer.nextToken();
                             e2 = number();
+                            
+        System.out.println("aqqqq"+e2.getValue());
                             if (e2.isInt()) {
                                 if (lexer.token == Symbol.RIGHTPAR) {
                                     lexer.nextToken();

@@ -21,24 +21,24 @@ public class WhileStmt extends Stmt {
     }
 
     public void genC(PW pw) {
-        pw.out.print("\twhile(");
+        pw.print("while(");
         for (int i = 0; i < orTestList.size(); i++) {
             orTestList.get(i).genC(pw);
         }
         pw.out.println("){");
-        pw.out.print("\t");
+        pw.incrementTS();
         if (!stmtList.isEmpty()) {
             for (int i = 0; i < stmtList.size(); i++) {
                 if(this.stmtList.get(i) instanceof ExprStmt){
-                    pw.out.print("\t");
                     this.stmtList.get(i).genC(pw);
                 }
                 else{
                     this.stmtList.get(i).genC(pw);
                 }
-                pw.out.print("\t");
             }
         }
-        pw.out.println("}");
+        pw.decrementTS();
+        pw.print("}\n");
+        
     }
 }
