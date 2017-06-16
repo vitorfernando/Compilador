@@ -31,17 +31,17 @@ public class IfStmt extends Stmt {
             }
 
             pw.out.println("){");
-            for (Stmt ifStmtList1 : this.ifStmtList) {
-                pw.incrementTS();
+            pw.incrementTS();
+            for (Stmt ifStmtList1 : this.ifStmtList) {            
                 ifStmtList1.genC(pw);
             }
             pw.decrementTS();
             pw.println("}");
         }
         if (!this.elseStmtList.isEmpty()) {
-            pw.print("else{\n");
+            pw.println("else{");
+            pw.incrementTS();
             for (Stmt elseStmtList1 : this.elseStmtList) {
-                pw.incrementTS();
                 elseStmtList1.genC(pw);
             }
             pw.decrementTS();

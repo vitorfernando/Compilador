@@ -13,22 +13,22 @@ bool achou;
 	for(var1 = 0;0 < 50; var1++){
 		if(guess < num){
 			printf("Your guess is too low.");
-				guess = guess * 2;
+			guess = guess * 2;
+		}
+		else{
+			if(guess > num){
+				printf("Your guess is too high.");
+				guess = guess / 2;
 			}
 			else{
-				if(guess > num){
-					printf("Your guess is too high.");
-						guess = guess / 2;
-					}
-					else{
-						printf("Yes, I am thinking about  %d",guess);
-							achou = True;
-								break;
-							}
-						}
-					}
-					if(achou){
-						printf("Nope. The number I was thinking of was  %d",num);
-					}
+				printf("Yes, I am thinking about  %d",guess);
+				achou = True;
+				break;
+			}
+		}
+	}
+	if(achou){
+		printf("Nope. The number I was thinking of was  %d",num);
+	}
 	return 0;
 }
