@@ -10,12 +10,14 @@ package Lexer;
  */
 public enum Symbol {
     IDENT("identifier"),
+    RETURN("return"),
     EOF("eof"),
     IF("if"),
     ELSE("else"),
     AND("and"),
     FOR("for"),
     INT("int"),
+    VOID("void"),
     PRINT("print"),
     WHILE("while"),
     BOOLEAN("boolean"),
@@ -54,6 +56,7 @@ public enum Symbol {
     LEFTBRACKET("["),
     RIGHTBRACKET("]"),
     LEFTPAR("("),
+    DEF("def"),
     RIGHTPAR(")");
     Symbol(String name) {
         this.name = name;

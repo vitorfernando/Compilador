@@ -31,7 +31,7 @@ public class Lexer {
     public int numberValue;
     private static final int MaxValueInteger = 32768;
     private int lineNumber = 1;
-
+    private Symbol lastToken;
     static private Hashtable<String, Symbol> keywordsTable;
 
     static {
@@ -70,6 +70,7 @@ public class Lexer {
             tokenPos++;
         }
         if (ch == '\0') {
+            lastToken = token;
             token = Symbol.EOF;
         } else {
             //ignore the coments
@@ -95,9 +96,11 @@ public class Lexer {
                     if (value == null) {
                         switch (stringValue) {
                             case "True":
+                                lastToken = token;
                                 token = Symbol.TRUE;
                                 break;
                             case "False":
+                                lastToken = token;
                                 token = Symbol.FALSE;
                                 break;
                             default:
@@ -105,6 +108,7 @@ public class Lexer {
                                 break;
                         }
                     } else {
+                        lastToken = token;
                         token = value;
                     }
 
@@ -118,6 +122,7 @@ public class Lexer {
                         number.append(input[tokenPos]);
                         tokenPos++;
                     }
+                    lastToken = token;
                     token = Symbol.NUMBER;
                     try {
                         numberValue = Integer.valueOf(number.toString()).intValue();
@@ -133,33 +138,46 @@ public class Lexer {
                 } else {
                     tokenPos++;
                     switch (ch) {
+                        
+                        
                         case '^':
+                            lastToken = token;
                             token = Symbol.POW;
                             break;
                         case '+':
+                            lastToken = token;
                             token = Symbol.PLUS;
                             break;
                         case '-':
+                            lastToken = token;
                             token = Symbol.MINUS;
                             break;
                         case '*':
+                            lastToken = token;
                             token = Symbol.MULT;
                             break;
                         case '/':
+                            lastToken = token;
                             token = Symbol.DIV;
                             break;
                         case '<':
-                            if (input[tokenPos] == '=') {
-                                tokenPos++;
-                                token = Symbol.LE;
-                            } else if (input[tokenPos] == '>') {
-                                tokenPos++;
-                                token = Symbol.LG;
-                            } else {
-                                token = Symbol.LT;
-                            }
+                            lastToken = token;
+                    switch (input[tokenPos]) {
+                        case '=':
+                            tokenPos++;
+                            token = Symbol.LE;
                             break;
                         case '>':
+                            tokenPos++;
+                            token = Symbol.LG;
+                            break;
+                        default:
+                            token = Symbol.LT;
+                            break;
+                    }
+                            break;
+                        case '>':
+                            lastToken = token;
                             if (input[tokenPos] == '=') {
                                 tokenPos++;
                                 token = Symbol.GE;
@@ -168,6 +186,7 @@ public class Lexer {
                             }
                             break;
                         case '=':
+                            lastToken = token;
                             if (input[tokenPos] == '=') {
                                 tokenPos++;
                                 token = Symbol.EQ;
@@ -176,12 +195,15 @@ public class Lexer {
                             }
                             break;
                         case ',':
+                            lastToken = token;
                             token = Symbol.COMMA;
                             break;
                         case ';':
+                            lastToken = token;
                             token = Symbol.SEMICOLON;
                             break;
                         case '\'':
+                            lastToken = token;
                             // get a string
                             StringBuffer str = new StringBuffer();
                             while (input[tokenPos] != '\'') {
@@ -193,27 +215,35 @@ public class Lexer {
                             stringValue = str.toString();
                             break;
                         case ':':
+                            lastToken = token;
                             token = Symbol.TP;
                             break;
                         case '.':
+                            lastToken = token;
                             token = Symbol.DOT;
                             break;
                         case '[':
+                            lastToken = token;
                             token = Symbol.LEFTBRACKET;
                             break;
                         case ']':
+                            lastToken = token;
                             token = Symbol.RIGHTBRACKET;
                             break;
                         case '{':
+                            lastToken = token;
                             token = Symbol.LEFTKEYS;
                             break;
                         case '}':
+                            lastToken = token;
                             token = Symbol.RIGHTKEYS;
                             break;
                         case '(':
+                            lastToken = token;
                             token = Symbol.LEFTPAR;
                             break;
                         case ')':
+                            lastToken = token;
                             token = Symbol.RIGHTPAR;
                             break;
                         default:
@@ -230,7 +260,10 @@ public class Lexer {
     public String getStringValue() {
         return stringValue;
     }
-
+    public void backToken(){
+        token = lastToken;
+        tokenPos = lastTokenPos;
+    }
     public int getNumberValue() {
         return numberValue;
     }
