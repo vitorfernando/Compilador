@@ -22,10 +22,12 @@ public class PrintStmt extends Stmt {
     public void genC(PW pw) {
         pw.print("printf(\"");
         for (int i = 0; i < arrayExpr.size(); i++) {
-            if (arrayExpr.get(i) instanceof StringExpr) {
+            AtomExpr atomexpr = (AtomExpr) arrayExpr.get(i);
+            
+            if (atomexpr.getE() instanceof StringExpr) {
                 arrayExpr.get(i).genC(pw);
-            } else if (arrayExpr.get(i) instanceof NumberExpr) {
-                NumberExpr ne = (NumberExpr) arrayExpr.get(i);
+            } else if (atomexpr.getE() instanceof NumberExpr) {
+                NumberExpr ne = (NumberExpr) atomexpr.getE();
                 if (ne.getType(Symbol.INT)) {
                     pw.out.print("%d");
                 }
@@ -33,7 +35,7 @@ public class PrintStmt extends Stmt {
                     pw.out.print("%f");
                 }
             } else {
-                VariableExpr varExpr = (VariableExpr) arrayExpr.get(i);
+                VariableExpr varExpr = (VariableExpr) atomexpr.getE();
                 if (varExpr.getType(Symbol.INT)) {
                     pw.out.print("%d");
                 } else if (varExpr.getType(Symbol.FLOAT)) {
@@ -52,9 +54,10 @@ public class PrintStmt extends Stmt {
         }
         pw.out.print("\"");
         for (int i = 0; i < arrayExpr.size(); i++) {
-            if (!(arrayExpr.get(i) instanceof StringExpr)) {
+            AtomExpr atomexpr = (AtomExpr) arrayExpr.get(i);
+            if (!(atomexpr.getE() instanceof StringExpr)) {
                 pw.out.print(",");
-                arrayExpr.get(i).genC(pw);
+                atomexpr.genC(pw);
             }
         }
         pw.out.println(");");

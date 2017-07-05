@@ -12,6 +12,10 @@ import Lexer.Symbol;
  */
 public class VariableExpr extends Expr {
 
+    public Variable getVar() {
+        return var;
+    }
+
     private Variable var;
 
     public VariableExpr(Variable var) {

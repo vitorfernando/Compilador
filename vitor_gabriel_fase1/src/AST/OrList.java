@@ -20,13 +20,13 @@ public class OrList extends Expr {
     }
     @Override
     public void genC(PW pw) {
-        pw.out.print("[");
+        pw.out.print("(");
         arrayExpr.get(0).genC(pw);
         for(int i = 1 ; i < arrayExpr.size(); i++){
             pw.out.print(",");
             arrayExpr.get(i).genC(pw);
         }
-        pw.out.print("]");
+        pw.out.print(")");
     }
     
     public int getSize(){

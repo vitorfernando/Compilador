@@ -22,10 +22,14 @@ public class ArgExpr extends Expr{
 
     @Override
     public void genC(PW pw) {
-         }
+        pw.out.print(type +" " + nameArray.getName());
+    }
 
     @Override
     public boolean getType(Symbol type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(this.type == type){
+            return true;
+        }
+        return false;
     }
 }

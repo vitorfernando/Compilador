@@ -13,7 +13,7 @@ import Lexer.Symbol;
  */
 public class AtomExpr extends Expr{
 
-    private Expr e,d;
+    public Expr e,d;
 
     public AtomExpr(Expr e, Expr d) {
         this.e = e;
@@ -23,12 +23,23 @@ public class AtomExpr extends Expr{
     
     @Override
     public void genC(PW pw) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        e.genC(pw);
+        if(d != null){
+            d.genC(pw);
+        }
+    }
+
+    public Expr getE() {
+        return e;
+    }
+
+    public Expr getD() {
+        return d;
     }
 
     @Override
     public boolean getType(Symbol type) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return e.getType(type);
     }
     
 }

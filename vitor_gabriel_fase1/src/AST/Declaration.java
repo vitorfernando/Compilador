@@ -6,7 +6,6 @@ package AST;
 
 import Lexer.Symbol;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 /**
  *
@@ -15,9 +14,14 @@ import java.util.Hashtable;
 public class Declaration {
 
     private ArrayList<VariableExpr> arrayVar;
- 
+
+    public ArrayList<VariableExpr> getArrayVar() {
+        return arrayVar;
+    }
+    
     public Declaration() {
         this.arrayVar = new ArrayList<VariableExpr>();
+        
     }
 
     public void setArrayVar(ArrayList<VariableExpr> arrayVar) {

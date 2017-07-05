@@ -28,7 +28,7 @@ public class Lexer {
     private int tokenPos;
     private int lastTokenPos;
     private String stringValue;
-    public int numberValue;
+    public String numberValue;
     private static final int MaxValueInteger = 32768;
     private int lineNumber = 1;
     private Symbol lastToken;
@@ -46,6 +46,7 @@ public class Lexer {
         keywordsTable.put("int", Symbol.INT);
         keywordsTable.put("string", Symbol.STRING);
         keywordsTable.put("float", Symbol.FLOAT);
+        keywordsTable.put("void", Symbol.VOID);
         keywordsTable.put("print", Symbol.PRINT);
         keywordsTable.put("for", Symbol.FOR);
         keywordsTable.put("while", Symbol.WHILE);
@@ -58,6 +59,8 @@ public class Lexer {
         keywordsTable.put("inrange", Symbol.INRANGE);
         keywordsTable.put("true", Symbol.TRUE);
         keywordsTable.put("false", Symbol.FALSE);
+        keywordsTable.put("def", Symbol.DEF);
+        keywordsTable.put("return", Symbol.RETURN);
     }
 
     public void nextToken() {
@@ -67,6 +70,7 @@ public class Lexer {
             if (ch == '\n') {
                 lineNumber++;
             }
+            
             tokenPos++;
         }
         if (ch == '\0') {
@@ -78,6 +82,9 @@ public class Lexer {
                 // comment found
                 while (input[tokenPos] != '\0' && input[tokenPos] != '\n') {
                     tokenPos++;
+                }
+                if (input[tokenPos] == '\n') {
+                    lineNumber++;
                 }
                 nextToken();
             } //is not a coment
@@ -111,10 +118,6 @@ public class Lexer {
                         lastToken = token;
                         token = value;
                     }
-
-                    if (Character.isDigit(ch)) {
-                        error.signal("Word followed by a number");
-                    }
                 } else if (Character.isDigit(input[tokenPos])) {
                     // get a number
                     StringBuffer number = new StringBuffer();
@@ -124,22 +127,16 @@ public class Lexer {
                     }
                     lastToken = token;
                     token = Symbol.NUMBER;
-                    try {
-                        numberValue = Integer.valueOf(number.toString()).intValue();
-                    } catch (NumberFormatException e) {
-                        error.signal("Number out of limits");
-                    }
-                    if (numberValue >= MaxValueInteger) {
-                        error.signal("Number out of limits");
-                    }
+                    
+                        numberValue = number.toString();
+                    
+                    
                     if (Character.isLetter(input[tokenPos])) {
                         error.signal("Number followed by a letter");
                     }
                 } else {
                     tokenPos++;
                     switch (ch) {
-                        
-                        
                         case '^':
                             lastToken = token;
                             token = Symbol.POW;
@@ -264,8 +261,18 @@ public class Lexer {
         token = lastToken;
         tokenPos = lastTokenPos;
     }
-    public int getNumberValue() {
+    
+    public String getNumberValue2(){
         return numberValue;
+    }
+    
+    public int getNumberValue() {
+        try {
+            return Integer.parseInt(numberValue);
+        } catch (NumberFormatException e) {
+            error.signal("Number out of limits");
+            return 0;
+        }
     }
 
     public int getLineNumber() {

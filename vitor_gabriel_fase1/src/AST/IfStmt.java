@@ -25,7 +25,6 @@ public class IfStmt extends Stmt {
     public void genC(PW pw) {
         if (!this.ifStmtList.isEmpty()) {
             pw.print("if(");
-
             for (Expr orTestList1 : this.orTestList) {
                 orTestList1.genC(pw);
             }

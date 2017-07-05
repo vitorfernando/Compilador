@@ -10,6 +10,6 @@ package AST;
  */
 public class BreakStmt extends Stmt{
     public void genC(PW pw) {
-        pw.print("break;\n");
+        pw.println("break;");
     }
 }

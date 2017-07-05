@@ -5,15 +5,32 @@
  */
 package AST;
 
+import Lexer.Symbol;
+
 /**
  *
  * @author vitor
  */
-public class ReturnStmt extends Stmt{
+public class ReturnStmt extends Stmt {
+
     private Expr e;
 
     public ReturnStmt(Expr e) {
         this.e = e;
     }
-    
+
+    public Expr getE() {
+        return e;
+    }
+
+    public void genC(PW pw) {
+        if (e == null) {
+            pw.println("return ;");
+        }else{
+            pw.print("return ");
+            e.genC(pw);
+            pw.out.println(" ;");
+        }
+    }
+
 }

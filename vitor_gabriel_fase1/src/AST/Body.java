@@ -4,6 +4,7 @@
  */
 package AST;
 
+import Lexer.Symbol;
 import java.util.ArrayList;
 
 /**
@@ -20,6 +21,29 @@ public class Body {
         this.declaration = declaration;
     }
 
+    public boolean checkReturnType(Symbol type) {
+        for (int i = 0; i < stmtList.size(); i++) {
+            if (stmtList.get(i) instanceof ReturnStmt) {
+                ReturnStmt rst = (ReturnStmt) stmtList.get(i);
+                if ((rst.getE() == null) && (type == Symbol.VOID)) {
+                    return true;
+                } else if (rst.getE() == null) {
+                    return false;
+                } else {
+                    return rst.getE().getType(type);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean checkReturn() {
+        if (stmtList.get(stmtList.size() - 1) instanceof ReturnStmt) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean checkStringType() {
         return declaration.checkStringType();
     }
@@ -31,10 +55,9 @@ public class Body {
         if (!declaration.isEmpty()) {
             declaration.genC(pw);
         }
-        pw.incrementTS();
+
         for (Stmt st : stmtList) {
             st.genC(pw);
         }
-        pw.decrementTS();
     }
 }

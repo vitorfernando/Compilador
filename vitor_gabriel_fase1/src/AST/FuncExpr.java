@@ -11,28 +11,30 @@ import Lexer.Symbol;
  *
  * @author vitor
  */
-public class Details extends Expr {
+public class FuncExpr extends Expr {
 
-    private Expr e;
+    private FuncDef funcDef;
+    private Expr d;
+    
+    public FuncExpr(FuncDef funcDef) {
+        this.funcDef = funcDef;
+    }
 
-    public Details(Expr e) {
-        this.e = e;
+    public void setD(Expr d) {
+        this.d = d;
     }
 
     @Override
     public void genC(PW pw) {
-        if (e instanceof OrList) {
-            e.genC(pw);
-        } else {
-            pw.out.print("[");
-            e.genC(pw);
-            pw.out.print("]");
-        }
+        pw.out.print(funcDef.getName());
     }
 
     @Override
     public boolean getType(Symbol type) {
-        return e.getType(type);
+        if (funcDef.getReturntype() == type) {
+            return true;
+        }
+        return false;
     }
 
 }
