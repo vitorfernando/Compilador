@@ -9,6 +9,7 @@ package Lexer;
  * @author vitor
  */
 public enum Symbol {
+    INVALID("invalid"),
     IDENT("identifier"),
     RETURN("return"),
     EOF("eof"),

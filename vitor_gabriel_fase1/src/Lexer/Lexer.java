@@ -28,6 +28,7 @@ public class Lexer {
     private int tokenPos;
     private int lastTokenPos;
     private String stringValue;
+    private String lastStringValue;
     public String numberValue;
     private static final int MaxValueInteger = 32768;
     private int lineNumber = 1;
@@ -36,7 +37,7 @@ public class Lexer {
 
     static {
         keywordsTable = new Hashtable<String, Symbol>();
-
+        keywordsTable.put("invalid", Symbol.INVALID);
         keywordsTable.put("end", Symbol.END);
         keywordsTable.put("if", Symbol.IF);
         keywordsTable.put("else", Symbol.ELSE);
@@ -97,11 +98,13 @@ public class Lexer {
                         // add a character to ident
                         ident.append(input[tokenPos]);
                         tokenPos++;
-                        while (Character.isLetter(input[tokenPos]) || Character.isDigit(input[tokenPos])) {
+                        while (Character.isLetter(input[tokenPos])
+                                || Character.isDigit(input[tokenPos]) || input[tokenPos] == '_') {
                             // add a character to ident
                             ident.append(input[tokenPos]);
                             tokenPos++;
                         }
+                        lastStringValue = stringValue;
                         stringValue = ident.toString();
                         Symbol value = keywordsTable.get(stringValue);
                         if (value == null) {
@@ -115,6 +118,7 @@ public class Lexer {
                                     token = Symbol.FALSE;
                                     break;
                                 default:
+                                    lastToken = token;
                                     token = Symbol.IDENT;
                                     break;
                             }
@@ -122,7 +126,7 @@ public class Lexer {
                             lastToken = token;
                             token = value;
                         }
-                    }else{
+                    } else {
                         error.signal("identifier must be iniciate by a letter");
                     }
 
@@ -150,11 +154,35 @@ public class Lexer {
                             break;
                         case '+':
                             lastToken = token;
-                            token = Symbol.PLUS;
+                            switch (input[tokenPos]) {
+                                case ' ':
+                                token = Symbol.PLUS;
+                                    break;
+                                default:
+                                    tokenPos++;
+                                    while(input[tokenPos] != ' '){
+                                        tokenPos++;
+                                    }
+                                    token = Symbol.INVALID;
+                                    error.signal("Invalid Character: '" + ch + "'");
+                                    break;
+                            }
                             break;
                         case '-':
                             lastToken = token;
-                            token = Symbol.MINUS;
+                            switch (input[tokenPos]) {
+                                case ' ':
+                                    token = Symbol.MINUS;
+                                    break;
+                                default:
+                                    tokenPos++;
+                                    while (input[tokenPos] != ' ') {
+                                        tokenPos++;
+                                    }
+                                    token = Symbol.INVALID;
+                                    error.signal("Invalid Character: '" + ch + "'");
+                                    break;
+                            }
                             break;
                         case '*':
                             lastToken = token;
@@ -175,18 +203,37 @@ public class Lexer {
                                     tokenPos++;
                                     token = Symbol.LG;
                                     break;
-                                default:
+                                case ' ':
                                     token = Symbol.LT;
+                                    break;
+                                default:
+                                    tokenPos++;
+                                    while (input[tokenPos] != ' ') {
+                                        tokenPos++;
+                                    }
+                                    token = Symbol.INVALID;
+                                    error.signal("Invalid Character: '" + ch + "'");
                                     break;
                             }
                             break;
                         case '>':
                             lastToken = token;
-                            if (input[tokenPos] == '=') {
-                                tokenPos++;
-                                token = Symbol.GE;
-                            } else {
-                                token = Symbol.GT;
+                            switch (input[tokenPos]) {
+                                case '=':
+                                    tokenPos++;
+                                    token = Symbol.GE;
+                                    break;
+                                case ' ':
+                                    token = Symbol.GT;
+                                    break;
+                                default:
+                                    tokenPos++;
+                                    while (input[tokenPos] != ' ') {
+                                        tokenPos++;
+                                    }
+                                    token = Symbol.INVALID;
+                                    error.signal("Invalid Character: '" + ch + "'");
+                                    break;
                             }
                             break;
                         case '=':
@@ -216,6 +263,7 @@ public class Lexer {
                             }
                             tokenPos++;
                             token = Symbol.STRING;
+                            lastStringValue = stringValue;
                             stringValue = str.toString();
                             break;
                         case ':':
@@ -251,7 +299,11 @@ public class Lexer {
                             token = Symbol.RIGHTPAR;
                             break;
                         default:
-                            error.signal("Invalid Character: ’" + ch + "’");
+                            if (input[tokenPos] == '=') {
+                                tokenPos++;
+                                token = Symbol.INVALID;
+                            }
+                            error.signal("Invalid Character: '" + ch + "'");
                     }
                 }
 
@@ -266,6 +318,7 @@ public class Lexer {
     }
 
     public void backToken() {
+        stringValue = lastStringValue;
         token = lastToken;
         tokenPos = lastTokenPos;
     }

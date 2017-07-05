@@ -123,9 +123,21 @@ public class Compiler {
         ArrayList<Stmt> stmtList = new ArrayList<Stmt>();
         Declaration declaration = new Declaration();
 
-        if (lexer.token == Symbol.INT || lexer.token == Symbol.FLOAT || lexer.token == Symbol.BOOLEAN
+        if (lexer.token == Symbol.INT || lexer.token == Symbol.FLOAT
+                || lexer.token == Symbol.BOOLEAN
                 || lexer.token == Symbol.STRING) {
             declaration = declaration();
+        } else if (lexer.token == Symbol.IDENT) {
+
+            lexer.nextToken();
+            if (lexer.token == Symbol.IDENT) {
+                lexer.backToken();
+                error.signal("Word " + lexer.getStringValue() + " nonexistent in language");
+                while (lexer.token != Symbol.SEMICOLON) {
+                    lexer.nextToken();
+                }
+                lexer.nextToken();
+            }
         }
 
         stmtList.add(stmt());
@@ -176,6 +188,13 @@ public class Compiler {
         ArrayList<VariableExpr> varArray = new ArrayList<VariableExpr>();
 
         varArray.add(nameArray(type));
+        if ((lexer.token != Symbol.COMMA) && (lexer.token != Symbol.SEMICOLON)) {
+            error.signal("symbol " + lexer.token.toString() + " invalid");
+            while (lexer.token != Symbol.SEMICOLON) {
+                lexer.nextToken();
+            }
+
+        }
         while (lexer.token == Symbol.COMMA) {
             lexer.nextToken();
             varArray.add(nameArray(type));
@@ -322,7 +341,6 @@ public class Compiler {
                 case BREAK:
                 case IDENT:
                 case RETURN:
-
                     return simpleStmt();
                 default:
                     error.signal("An statment is expected");
@@ -439,53 +457,51 @@ public class Compiler {
         if (lexer.token == Symbol.FOR) {
             lexer.nextToken();
             name = name();
-            if (lexer.token == Symbol.INRANGE) {
-                lexer.nextToken();
-                if (lexer.token == Symbol.LEFTPAR) {
-                    lexer.nextToken();
-                    e1 = number();
-                    if (e1.isInt()) {
-                        if (lexer.token == Symbol.COMMA) {
-                            lexer.nextToken();
-                            e2 = number();
-                            if (e2.isInt()) {
-                                if (lexer.token == Symbol.RIGHTPAR) {
-                                    lexer.nextToken();
-                                    if (lexer.token == Symbol.LEFTKEYS) {
-                                        lexer.nextToken();
-                                        while (lexer.token == Symbol.WHILE || lexer.token == Symbol.FOR || lexer.token == Symbol.IF
-                                                || lexer.token == Symbol.PRINT || lexer.token == Symbol.BREAK
-                                                || lexer.token == Symbol.IDENT) {
-                                            st = stmt();
-                                            if (st != null) {
-                                                stmtList.add(st);
-                                            }
-                                        }
-                                        if (lexer.token == Symbol.RIGHTKEYS) {
-                                            lexer.nextToken();
-                                        } else {
-                                            error.signal("An } is expected");
-                                        }
-                                    } else {
-                                        error.signal("An { is expected");
-                                    }
-                                } else {
-                                    error.signal("An ) is expected");
-                                }
-                            } else {
-                                error.signal("An integer is expected");
-                            }
-                        } else {
-                            error.signal("An , is expected");
-                        }
-                    } else {
-                        error.signal("An integer is expected");
-                    }
-                } else {
-                    error.signal("An ( is expected");
-                }
-            } else {
+            if (lexer.token != Symbol.INRANGE) {
                 error.signal("Inrange is expected");
+            } else {
+                lexer.nextToken();
+            }
+            if (lexer.token != Symbol.LEFTPAR) {
+                error.signal("missing (");
+            } else {
+                lexer.nextToken();
+            }
+            e1 = number();
+            if (!e1.isInt()) {
+                error.signal("An integer is expected");
+            }
+            if (lexer.token == Symbol.COMMA) {
+                error.signal("missing ,");
+            } else {
+                lexer.nextToken();
+            }
+            e2 = number();
+            if (!e2.isInt()) {
+                error.signal("An integer is expected");
+            }
+            if (lexer.token != Symbol.RIGHTPAR) {
+                error.signal("An ( is expected");
+            } else {
+                lexer.nextToken();
+            }
+            if (lexer.token != Symbol.LEFTKEYS) {
+                error.signal("An { is expected");
+            } else {
+                lexer.nextToken();
+            }
+            while (lexer.token == Symbol.WHILE || lexer.token == Symbol.FOR || lexer.token == Symbol.IF
+                    || lexer.token == Symbol.PRINT || lexer.token == Symbol.BREAK
+                    || lexer.token == Symbol.IDENT) {
+                st = stmt();
+                if (st != null) {
+                    stmtList.add(st);
+                }
+            }
+            if (lexer.token != Symbol.RIGHTKEYS) {
+                error.signal("An } is expected");
+            } else {
+                lexer.nextToken();
             }
         }
         return new ForStmt(name, e1, e2, stmtList);
@@ -538,18 +554,19 @@ public class Compiler {
                 lexer.nextToken();
                 if (lexer.token == Symbol.NUMBER) {
                     index = lexer.getNumberValue();
+                    if ((size = varTable.get(name).getSize()) <= index) {
+                        error.signal("Index" + index + " out of bounds of " + name + "[" + size + "]");
+                    }
                     lexer.nextToken();
                     if (lexer.token != Symbol.RIGHTBRACKET) {
                         error.signal("missing ]");
                     } else {
                         lexer.nextToken();
                     }
-                    if (varTable.get(name) == null) {
-                        error.signal("Variable " + name + "not declared");
-                    } else if ((size = varTable.get(name).getSize()) <= index) {
-                        error.signal("Index" + index + " out of bounds of " + name + "[" + size + "]");
-                    }
                 }
+            }
+            if (varTable.get(name) == null) {
+                error.signal("Variable " + name + "not declared or word nonexistent in language");
             }
 
             if (lexer.token == Symbol.ASSIGN) {
@@ -572,7 +589,7 @@ public class Compiler {
                     error.signal("missing ;");
                 }
             } else {
-                error.signal("missing = ");
+                error.signal("missing =");
             }
         }
         for (int i = 0; i < arrayExpr.size(); i++) {
@@ -655,6 +672,12 @@ public class Compiler {
         if (lexer.token == Symbol.LT || lexer.token == Symbol.GT || lexer.token == Symbol.EQ
                 || lexer.token == Symbol.GE || lexer.token == Symbol.LE || lexer.token == Symbol.LG) {
             op = compOP();
+            right = expr();
+            left = new CompositeExpr(left, op, right);
+        }
+        if(lexer.token == Symbol.INVALID){
+            op = lexer.token;
+            lexer.nextToken();
             right = expr();
             left = new CompositeExpr(left, op, right);
         }
@@ -829,7 +852,6 @@ public class Compiler {
                     if (lexer.token != Symbol.TP) {
                         error.signal("missing :");
                     } else {
-
                         lexer.nextToken();
                         if (lexer.token == Symbol.INT || lexer.token == Symbol.FLOAT
                                 || lexer.token == Symbol.BOOLEAN || lexer.token == Symbol.VOID

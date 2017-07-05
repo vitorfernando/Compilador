@@ -1,5 +1,7 @@
 #include <stdio.h>
 void main(){
-	printf("Hello, world!\n");
+	int a;
+	a = (7);
+	a = (2 - 1);
 	return ;
 }
