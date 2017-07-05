@@ -51,55 +51,59 @@ public class Declaration {
         int size;
         for (int i = 0; i < arrayVar.size(); i++) {
             type = arrayVar.get(i).getType();
-            if (type == Symbol.INT) {
-                pw.out.print("\tint ");
-                pw.out.print(arrayVar.get(i).getName());
-                i++;
-                while (i < arrayVar.size() && (type = arrayVar.get(i).getType()) == Symbol.INT) {
-                    pw.out.print("," + arrayVar.get(i).getName());
-                    if ((size = arrayVar.get(i).getSize()) > 0) {
-                        pw.out.print("[" + size + "]");
-                    }
+            if (null != type) switch (type) {
+                case INT:
+                    pw.print("int ");
+                    pw.out.print(arrayVar.get(i).getName());
                     i++;
-                }
-                pw.out.println(";");
-            } else if (type == Symbol.FLOAT) {
-                pw.out.print("\tfloat ");
-                pw.out.print(arrayVar.get(i).getName());
-                i++;
-                while (i < arrayVar.size() &&(type = arrayVar.get(i).getType()) == Symbol.FLOAT) {
-                    pw.out.print("," + arrayVar.get(i).getName());
-                    if ((size = arrayVar.get(i).getSize()) > 0) {
-                        pw.out.print("[" + size + "]");
-                    }
+                    while (i < arrayVar.size() && (type = arrayVar.get(i).getType()) == Symbol.INT) {
+                        pw.out.print("," + arrayVar.get(i).getName());
+                        if ((size = arrayVar.get(i).getSize()) > 0) {
+                            pw.out.print("[" + size + "]");
+                        }
+                        i++;
+                    }   pw.out.println(";");
+                    break;
+                case FLOAT:
+                    pw.print("float ");
+                    pw.out.print(arrayVar.get(i).getName());
                     i++;
-                }
-                pw.out.println(";");
-            } else if (type == Symbol.BOOLEAN) {
-                pw.out.print("bool ");
-                pw.out.print(arrayVar.get(i).getName());
-                i++;
-                while (i < arrayVar.size() &&(type = arrayVar.get(i).getType()) == Symbol.BOOLEAN) {
-                    pw.out.print("," + arrayVar.get(i).getName());
-                    if ((size = arrayVar.get(i).getSize()) > 0) {
-                        pw.out.print("[" + size + "]");
-                    }
+                    while (i < arrayVar.size() &&(type = arrayVar.get(i).getType()) == Symbol.FLOAT) {
+                        pw.out.print("," + arrayVar.get(i).getName());
+                        if ((size = arrayVar.get(i).getSize()) > 0) {
+                            pw.out.print("[" + size + "]");
+                        }
+                        i++;
+                    }   pw.out.println(";");
+                    break;
+                case BOOLEAN:
+                    pw.print("bool ");
+                    pw.out.print(arrayVar.get(i).getName());
                     i++;
-                }
-                pw.out.println(";");
-            } else if (type == Symbol.STRING) {
-                pw.out.print("\tchar ");
-                pw.out.print(arrayVar.get(i).getName());
-                i++;
-                while (i < arrayVar.size() &&(type = arrayVar.get(i).getType()) == Symbol.STRING) {
-                    pw.out.print("," + arrayVar.get(i).getName());
-                    if ((size = arrayVar.get(i).getSize()) > 0) {
-                        pw.out.print("[" + size + "]");
-                    }
+                    while (i < arrayVar.size() &&(type = arrayVar.get(i).getType()) == Symbol.BOOLEAN) {
+                        pw.out.print("," + arrayVar.get(i).getName());
+                        if ((size = arrayVar.get(i).getSize()) > 0) {
+                            pw.out.print("[" + size + "]");
+                        }
+                        i++;
+                    }   pw.out.println(";");
+                    break;
+                case STRING:
+                    pw.print("char ");
+                    pw.out.print(arrayVar.get(i).getName());
                     i++;
-                }
-                pw.out.println(";");
+                    while (i < arrayVar.size() &&(type = arrayVar.get(i).getType()) == Symbol.STRING) {
+                        pw.out.print("," + arrayVar.get(i).getName());
+                        if ((size = arrayVar.get(i).getSize()) > 0) {
+                            pw.out.print("[" + size + "]");
+                        }
+                        i++;
+                    }   pw.out.println(";");
+                    break;
+                default:
+                    break;
             }
         }
+        
     }
 }

@@ -31,13 +31,13 @@ public class ForStmt extends Stmt {
         NumberExpr n2 = (NumberExpr) e2;
         
         if(Integer.valueOf(n1.getValue()) < Integer.valueOf(n2.getValue()) ){
-            e1.genC(pw);
+            pw.out.print(name);
             pw.out.print(" < ");
             e2.genC(pw);
             pw.out.println("; "+ name + "++){");
         }
         else{
-            e1.genC(pw);
+            pw.out.print(name);
             pw.out.print(" > ");
             e2.genC(pw);
             pw.out.println("; "+ name + "--){");

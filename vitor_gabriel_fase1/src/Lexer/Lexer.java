@@ -1,7 +1,7 @@
 /*
     Author(s): Vitor Fernando Souza Silva   RA: 552488
                Gabriel Piovani              RA: 552216 
-*/
+ */
 package Lexer;
 
 import Error.CompilerError;
@@ -57,8 +57,8 @@ public class Lexer {
         keywordsTable.put("in", Symbol.IN);
         keywordsTable.put("notin", Symbol.NOTIN);
         keywordsTable.put("inrange", Symbol.INRANGE);
-        keywordsTable.put("true", Symbol.TRUE);
-        keywordsTable.put("false", Symbol.FALSE);
+        keywordsTable.put("True", Symbol.TRUE);
+        keywordsTable.put("False", Symbol.FALSE);
         keywordsTable.put("def", Symbol.DEF);
         keywordsTable.put("return", Symbol.RETURN);
     }
@@ -70,7 +70,7 @@ public class Lexer {
             if (ch == '\n') {
                 lineNumber++;
             }
-            
+
             tokenPos++;
         }
         if (ch == '\0') {
@@ -93,31 +93,39 @@ public class Lexer {
                     StringBuffer ident = new StringBuffer();
                     // is input[tokenPos] a letter ?
                     // isLetter is a static method of class Character
-                    while (Character.isLetter(input[tokenPos])) {
+                    if (Character.isLetter(input[tokenPos])) {
                         // add a character to ident
                         ident.append(input[tokenPos]);
                         tokenPos++;
-                    }
-                    stringValue = ident.toString();
-                    Symbol value = keywordsTable.get(stringValue);
-                    if (value == null) {
-                        switch (stringValue) {
-                            case "True":
-                                lastToken = token;
-                                token = Symbol.TRUE;
-                                break;
-                            case "False":
-                                lastToken = token;
-                                token = Symbol.FALSE;
-                                break;
-                            default:
-                                token = Symbol.IDENT;
-                                break;
+                        while (Character.isLetter(input[tokenPos]) || Character.isDigit(input[tokenPos])) {
+                            // add a character to ident
+                            ident.append(input[tokenPos]);
+                            tokenPos++;
                         }
-                    } else {
-                        lastToken = token;
-                        token = value;
+                        stringValue = ident.toString();
+                        Symbol value = keywordsTable.get(stringValue);
+                        if (value == null) {
+                            switch (stringValue) {
+                                case "True":
+                                    lastToken = token;
+                                    token = Symbol.TRUE;
+                                    break;
+                                case "False":
+                                    lastToken = token;
+                                    token = Symbol.FALSE;
+                                    break;
+                                default:
+                                    token = Symbol.IDENT;
+                                    break;
+                            }
+                        } else {
+                            lastToken = token;
+                            token = value;
+                        }
+                    }else{
+                        error.signal("identifier must be iniciate by a letter");
                     }
+
                 } else if (Character.isDigit(input[tokenPos])) {
                     // get a number
                     StringBuffer number = new StringBuffer();
@@ -127,10 +135,9 @@ public class Lexer {
                     }
                     lastToken = token;
                     token = Symbol.NUMBER;
-                    
-                        numberValue = number.toString();
-                    
-                    
+
+                    numberValue = number.toString();
+
                     if (Character.isLetter(input[tokenPos])) {
                         error.signal("Number followed by a letter");
                     }
@@ -159,19 +166,19 @@ public class Lexer {
                             break;
                         case '<':
                             lastToken = token;
-                    switch (input[tokenPos]) {
-                        case '=':
-                            tokenPos++;
-                            token = Symbol.LE;
-                            break;
-                        case '>':
-                            tokenPos++;
-                            token = Symbol.LG;
-                            break;
-                        default:
-                            token = Symbol.LT;
-                            break;
-                    }
+                            switch (input[tokenPos]) {
+                                case '=':
+                                    tokenPos++;
+                                    token = Symbol.LE;
+                                    break;
+                                case '>':
+                                    tokenPos++;
+                                    token = Symbol.LG;
+                                    break;
+                                default:
+                                    token = Symbol.LT;
+                                    break;
+                            }
                             break;
                         case '>':
                             lastToken = token;
@@ -257,15 +264,16 @@ public class Lexer {
     public String getStringValue() {
         return stringValue;
     }
-    public void backToken(){
+
+    public void backToken() {
         token = lastToken;
         tokenPos = lastTokenPos;
     }
-    
-    public String getNumberValue2(){
+
+    public String getNumberValue2() {
         return numberValue;
     }
-    
+
     public int getNumberValue() {
         try {
             return Integer.parseInt(numberValue);

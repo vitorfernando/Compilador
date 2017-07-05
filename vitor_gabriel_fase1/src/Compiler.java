@@ -104,6 +104,16 @@ public class Compiler {
                     || lexer.token == Symbol.TRUE || lexer.token == Symbol.FALSE) {
                 e = orList();
             }
+            if (lexer.token == Symbol.RIGHTPAR) {
+                lexer.nextToken();
+                if (lexer.token == Symbol.SEMICOLON) {
+                    lexer.nextToken();
+                } else {
+                    error.signal("missing ;");
+                }
+            } else {
+                error.signal("missing )");
+            }
         }
         return new FuncStmt(name, e);
     }
@@ -135,13 +145,12 @@ public class Compiler {
         VariableExpr varExpr = null;
         String name = name();
         int size = -1;
-        if (!name.isEmpty()) {           
+        if (!name.isEmpty()) {
             if (varTable.get(name) != null) {
                 error.signal("Variable " + name + " has already been declared");
             }
 
             var = new Variable(name, type);
-            varExpr = new VariableExpr(var);
 
             if (lexer.token == Symbol.LEFTBRACKET) {
                 lexer.nextToken();
@@ -157,6 +166,7 @@ public class Compiler {
             }
         }
         var.setSize(size);
+        varExpr = new VariableExpr(var);
         varTable.put(name, varExpr);
         return varExpr;
     }
@@ -244,7 +254,7 @@ public class Compiler {
     private Declaration declaration() {
         Declaration declaration = new Declaration();
         ArrayList<VariableExpr> arrayVar = new ArrayList<VariableExpr>();
-        
+
         Symbol type;
 
         if (lexer.token == Symbol.INT || lexer.token == Symbol.FLOAT
@@ -631,11 +641,9 @@ public class Compiler {
 
     // " . "’ 
     private StringExpr string() {
+        String str = lexer.getStringValue();
         lexer.nextToken();
-        if (lexer.token == Symbol.STRING) {
-            lexer.nextToken();
-        }
-        return new StringExpr(lexer.getStringValue());
+        return new StringExpr(str);
     }
 
     // Expr [CompOp Expr] 
@@ -684,50 +692,21 @@ public class Compiler {
     private AtomExpr atomExpr() {
         Expr e = atom(), d = null;
 
-        if (lexer.token == Symbol.LEFTBRACKET || lexer.token == Symbol.LEFTPAR) {    
-            d = details();         
-        }        
+        if (lexer.token == Symbol.LEFTBRACKET || lexer.token == Symbol.LEFTPAR) {
+            d = details(e);
+        }
+
         return new AtomExpr(e, d);
     }
 
-    //Atom ::= Name[ ‘[’(Number | Name)‘]’ ] | Number | String | ’True’ | ’False’
+    //Atom ::= Name | Number | String | ’True’ | ’False’
     private Expr atom() {
+        Details d = null;
         switch (lexer.token) {
             case IDENT:
-                int size = 0;
-                int index = -1;
                 String name = name();
-                if (lexer.token == Symbol.LEFTBRACKET) {
-                    lexer.nextToken();
-                    if (lexer.token == Symbol.NUMBER) {
-                        index = lexer.getNumberValue();
-
-                        if (varTable.get(name) == null) {
-                            error.signal("Variable " + name + "not declared");
-                        } else if ((size = varTable.get(name).getSize()) <= index) {
-                            error.signal("Index" + index + " out of bounds of " + name + "[" + size + "]");
-                        }
-                        lexer.nextToken();
-                    } else if (lexer.token == Symbol.IDENT) {
-                        String nameIndex = name();
-                        if (varTable.get(nameIndex) == null) {
-                            error.signal("Variable " + nameIndex + "not declared");
-                        }
-                        if (varTable.get(nameIndex).getType(Symbol.INT)) {
-                            error.signal("Not integer index");
-                        }
-                        lexer.nextToken();
-                    }
-                    if (lexer.token != Symbol.RIGHTBRACKET) {
-                        error.signal("missing ]");
-                    } else {
-                        lexer.nextToken();
-                    }
-                }
                 if (varTable.get(name) != null) {
-                    Variable v = new Variable(name, varTable.get(name).getType());
-                    v.setSize(index);
-                    return new VariableExpr(v);
+                    return varTable.get(name);
                 } else {
                     if (funcTable.get(name) != null) {
                         return new FuncExpr(funcTable.get(name));
@@ -750,19 +729,26 @@ public class Compiler {
     }
 
     //Details ::= ‘[’(Number | Name)‘]’ | ’(’ [OrList] ’)’ 
-    private Expr details() {
+    private Expr details(Expr e) {
         Details d = null;
 
         if (lexer.token == Symbol.LEFTBRACKET) {
             lexer.nextToken();
             if (lexer.token == Symbol.NUMBER) {
-                d = new Details(number());
+                NumberExpr numberExpr = number();
+                d = new Details(numberExpr);
+                VariableExpr varExpr = (VariableExpr) e;
+                if (varExpr.getSize() < Integer.parseInt(numberExpr.getValue())) {
+                    error.signal("out of bounds");
+                }
             } else if (lexer.token == Symbol.IDENT) {
                 d = new Details(new StringExpr(name()));
             }
 
             if (lexer.token != Symbol.RIGHTBRACKET) {
                 error.signal("missing ]");
+            } else {
+                lexer.nextToken();
             }
         } else if (lexer.token == Symbol.LEFTPAR) {
             lexer.nextToken();
@@ -824,7 +810,7 @@ public class Compiler {
     private FuncDef funcDef() {
         FuncDef funcDef = null;
         ArrayList<ArgExpr> argsList = new ArrayList<ArgExpr>();
-        varTable = new Hashtable<String,VariableExpr>();
+        varTable = new Hashtable<String, VariableExpr>();
         Symbol type;
         if (lexer.token == Symbol.DEF) {
             lexer.nextToken();
@@ -855,11 +841,10 @@ public class Compiler {
                                 lexer.nextToken();
                             }
                             Body body = body();
-                            if(!body.checkReturn()){
-                                error.signal("function "+name+" should have a return statment");
-                            }
-                            else if(!body.checkReturnType(type)){
-                                error.signal("incompative types between return statment and return type of function "+name);
+                            if (!body.checkReturn()) {
+                                error.signal("function " + name + " should have a return statment");
+                            } else if (!body.checkReturnType(type)) {
+                                error.signal("incompative types between return statment and return type of function " + name);
                             }
                             if (lexer.token != Symbol.RIGHTKEYS) {
                                 error.signal("missing }");

@@ -20,22 +20,35 @@ public class PrintStmt extends Stmt {
     }
 
     public void genC(PW pw) {
+        AtomExpr atomExpr;
         pw.print("printf(\"");
         for (int i = 0; i < arrayExpr.size(); i++) {
-            AtomExpr atomexpr = (AtomExpr) arrayExpr.get(i);
-            
-            if (atomexpr.getE() instanceof StringExpr) {
+            if (arrayExpr.get(i) instanceof CompositeExpr) {
+                CompositeExpr cexp = (CompositeExpr) arrayExpr.get(i);
+                atomExpr = (AtomExpr) cexp.getLeft();
+            } else {
+                atomExpr = (AtomExpr) arrayExpr.get(i);
+            }
+            if (atomExpr.getE() instanceof StringExpr) {
                 arrayExpr.get(i).genC(pw);
-            } else if (atomexpr.getE() instanceof NumberExpr) {
-                NumberExpr ne = (NumberExpr) atomexpr.getE();
+            } else if (atomExpr.getE() instanceof NumberExpr) {
+                NumberExpr ne = (NumberExpr) atomExpr.getE();
                 if (ne.getType(Symbol.INT)) {
                     pw.out.print("%d");
-                }
-                if (ne.getType(Symbol.FLOAT)) {
+                } else if (ne.getType(Symbol.FLOAT)) {
                     pw.out.print("%f");
                 }
+            } else if (atomExpr.getE() instanceof FuncExpr) {
+                FuncExpr funcExpr = (FuncExpr) atomExpr.getE();
+                if (atomExpr.getType(Symbol.INT)) {
+                    pw.out.print("%d");
+                } else if (atomExpr.getType(Symbol.FLOAT)) {
+                    pw.out.print("%f");
+                } else if (atomExpr.getType(Symbol.STRING)) {
+                    pw.out.print("%c");
+                }
             } else {
-                VariableExpr varExpr = (VariableExpr) atomexpr.getE();
+                VariableExpr varExpr = (VariableExpr) atomExpr.getE();
                 if (varExpr.getType(Symbol.INT)) {
                     pw.out.print("%d");
                 } else if (varExpr.getType(Symbol.FLOAT)) {
@@ -54,10 +67,19 @@ public class PrintStmt extends Stmt {
         }
         pw.out.print("\"");
         for (int i = 0; i < arrayExpr.size(); i++) {
-            AtomExpr atomexpr = (AtomExpr) arrayExpr.get(i);
-            if (!(atomexpr.getE() instanceof StringExpr)) {
+            if (arrayExpr.get(i) instanceof CompositeExpr) {
+                CompositeExpr cexp = (CompositeExpr) arrayExpr.get(i);
+                atomExpr = (AtomExpr) cexp.getLeft();
+            } else {
+                atomExpr = (AtomExpr) arrayExpr.get(i);
+            }
+            if (atomExpr.getE() instanceof FuncExpr) {
                 pw.out.print(",");
-                atomexpr.genC(pw);
+                atomExpr.genC(pw);
+                pw.out.print("()");
+            } else if (!(atomExpr.getE() instanceof StringExpr)) {
+                pw.out.print(",");
+                atomExpr.genC(pw);
             }
         }
         pw.out.println(");");

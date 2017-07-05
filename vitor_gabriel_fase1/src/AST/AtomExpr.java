@@ -11,20 +11,19 @@ import Lexer.Symbol;
  *
  * @author vitor
  */
-public class AtomExpr extends Expr{
+public class AtomExpr extends Expr {
 
-    public Expr e,d;
+    public Expr e, d;
 
     public AtomExpr(Expr e, Expr d) {
         this.e = e;
         this.d = d;
     }
-    
-    
+
     @Override
     public void genC(PW pw) {
         e.genC(pw);
-        if(d != null){
+        if (d != null) {
             d.genC(pw);
         }
     }
@@ -41,5 +40,5 @@ public class AtomExpr extends Expr{
     public boolean getType(Symbol type) {
         return e.getType(type);
     }
-    
+
 }

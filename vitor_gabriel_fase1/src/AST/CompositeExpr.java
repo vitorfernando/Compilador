@@ -13,6 +13,14 @@ import Lexer.Symbol;
 public class CompositeExpr extends Expr {
 
     private Expr left, right;
+
+    public Expr getLeft() {
+        return left;
+    }
+
+    public Expr getRight() {
+        return right;
+    }
     private Symbol oper;
 
     public CompositeExpr(Expr pleft, Symbol poper, Expr pright) {

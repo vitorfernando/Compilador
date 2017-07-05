@@ -9,7 +9,8 @@ package AST;
  *
  * @author vitor
  */
-public class FuncStmt extends Stmt{
+public class FuncStmt extends Stmt {
+
     private String name;
     private Expr e;
 
@@ -17,5 +18,15 @@ public class FuncStmt extends Stmt{
         this.name = name;
         this.e = e;
     }
-    
+
+    public void genC(PW pw) {
+        pw.print(name);
+        if (e != null) {
+            e.genC(pw);
+            pw.out.println(";");
+        } else {
+            pw.out.println("();");
+        }
+    }
+
 }

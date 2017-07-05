@@ -28,14 +28,18 @@ public class ExprStmt extends Stmt {
             pw.out.print("[" + index + "]");
         }
         pw.out.print(" = ");
+        if (arrayExpr.get(0) instanceof OrList) {
+            pw.out.print("[");
+        }else{
+            pw.out.print("(");
+        }
         for (int i = 0; i < arrayExpr.size(); i++) {
-            if (arrayExpr.get(i) instanceof StringExpr) {
-                pw.out.print("'");
-                arrayExpr.get(i).genC(pw);
-                pw.out.print("'");
-            } else {
-                arrayExpr.get(i).genC(pw);
-            }
+            arrayExpr.get(i).genC(pw);
+        }
+        if (arrayExpr.get(0) instanceof OrList) {
+            pw.out.print("]");
+        }else{
+            pw.out.print(")");
         }
         pw.out.println(";");
     }
